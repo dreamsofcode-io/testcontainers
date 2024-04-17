@@ -37,44 +37,34 @@ func (i Info) Limit() int64 {
 	return i.limit
 }
 
-func New(url string, rate int64, duration time.Duration) (*RateLimiter, error) {
-	opts, err := redis.ParseURL(url)
-	if err != nil {
-		return nil, fmt.Errorf("could not parse url: %w", err)
-	}
-
-	client := redis.NewClient(opts)
-
+func New(client *redis.Client, rate int64, duration time.Duration) *RateLimiter {
 	return &RateLimiter{
 		client:   client,
 		duration: duration,
 		rate:     rate,
-	}, nil
+	}
 }
 
 func (r *RateLimiter) keyFunc(ip net.IP) string {
-	return fmt.Sprintf("rate:%s", ip.String())
+	return fmt.Sprintf("%s", ip.String())
 }
 
 // AddAndCheckIfExceeds is used to determine whether or not the
 // rate limit has been exceeded, whilst also adding another hit to it.
 func (r *RateLimiter) AddAndCheckIfExceeds(ctx context.Context, ip net.IP) (Info, error) {
-	expires := time.Now().Add(r.duration)
+	p := r.client.Pipeline()
 
-	pipeline := r.client.TxPipeline()
-	incr := pipeline.Incr(ctx, r.keyFunc(ip))
-	if incr.Val() == 1 {
-		pipeline.ExpireAt(ctx, r.keyFunc(ip), expires)
-	}
+	incr := p.Incr(ctx, r.keyFunc(ip))
+	p.ExpireNX(ctx, r.keyFunc(ip), r.duration)
+	expires := p.ExpireTime(ctx, r.keyFunc(ip)).Val()
 
-	_, err := pipeline.Exec(ctx)
-	if err != nil {
-		return Info{}, fmt.Errorf("failed to exec pipeline: %w", err)
+	if _, err := p.Exec(ctx); err != nil {
+		return Info{}, err
 	}
 
 	return Info{
 		hits:    incr.Val(),
 		limit:   r.rate,
-		expires: time.Now().Add(r.duration).Add(time.Second),
+		expires: time.Unix(0, 0).Add(expires),
 	}, nil
 }
