@@ -22,12 +22,13 @@ func loadClient() (*redis.Client, error) {
 }
 
 func TestRateLimiter(t *testing.T) {
+	ctx := context.Background()
+
 	client, err := loadClient()
 	assert.NoError(t, err)
 
 	limiter := ratelimit.New(client, 3, time.Minute)
 
-	ctx := context.Background()
 	ip := "192.168.1.54"
 
 	t.Run("happy path flow", func(t *testing.T) {
