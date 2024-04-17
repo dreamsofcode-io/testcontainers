@@ -6,9 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dreamsofcode-io/testcontainers/ratelimit"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/dreamsofcode-io/testcontainers/ratelimit"
 )
 
 func loadClient() (*redis.Client, error) {
@@ -53,7 +54,5 @@ func TestRateLimiter(t *testing.T) {
 
 		// Check expire time is set
 		assert.Greater(t, client.ExpireTime(ctx, ip).Val(), time.Duration(0))
-
-		// client.FlushAll(ctx)
 	})
 }
