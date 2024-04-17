@@ -1,4 +1,4 @@
-module github.com/dreamsofcode-io/spellbook
+module github.com/dreamsofcode-io/testcontainers
 
 go 1.22.1
 

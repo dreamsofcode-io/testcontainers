@@ -6,10 +6,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dreamsofcode-io/testcontainers/ratelimit"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/dreamsofcode-io/spellbook/ratelimit"
 )
 
 func loadClient() (*redis.Client, error) {
