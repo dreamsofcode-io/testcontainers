@@ -13,6 +13,8 @@ import (
 )
 
 func TestCreate(t *testing.T) {
+	checkParallel(t)
+
 	testCases := []struct {
 		name   string
 		setup  func(ctx context.Context, db *sql.DB) error
@@ -57,13 +59,16 @@ func TestCreate(t *testing.T) {
 		},
 	}
 
-	conn, err := database.Connect(connURL)
-	assert.NoError(t, err)
-
-	repo := repository.New(conn)
-
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			checkParallel(t)
+
+			conn, err := database.Connect(connURL)
+			assert.NoError(t, err)
+
+			repo := repository.New(conn)
+
+			t.Cleanup(cleanup)
 			ctx := context.Background()
 
 			if tc.setup != nil {
@@ -72,6 +77,7 @@ func TestCreate(t *testing.T) {
 
 			now := time.Now().Truncate(time.Millisecond)
 			spell, err := repo.Create(ctx, tc.input)
+			time.Sleep(sleepTime)
 			after := time.Now().Truncate(time.Millisecond)
 
 			if tc.errors {

@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -23,14 +24,16 @@ func (r *Spells) FindByID(ctx context.Context, id uuid.UUID) (Spell, error) {
 	res := Spell{}
 	err := row.Scan(&res.ID, &res.Name, &res.Damage, &res.Mana, &res.CreatedAt, &res.UpdatedAt)
 
-	if err != sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
+		return Spell{}, ErrNotFound
+	} else if err != nil {
 		return Spell{}, ErrNotFound
 	}
 
 	return res, nil
 }
 
-func (r *Spells) FindAll(ctx context.Context, id uuid.UUID) ([]Spell, error) {
+func (r *Spells) FindAll(ctx context.Context) ([]Spell, error) {
 	var spells []Spell
 
 	rows, err := r.db.QueryContext(ctx, baseFindQuery)

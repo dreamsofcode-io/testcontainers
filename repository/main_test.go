@@ -4,11 +4,14 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/dreamsofcode-io/testcontainers/database"
 )
 
 var connURL = "postgresql://user:secret@localhost:5432/testdb?sslmode=disable"
+var parrallel = false
+var sleepTime = time.Millisecond * 500
 
 func TestMain(m *testing.M) {
 	migrate, err := database.Migrate(connURL)
@@ -21,4 +24,19 @@ func TestMain(m *testing.M) {
 	migrate.Drop()
 
 	os.Exit(res)
+}
+
+func cleanup() {
+	conn, err := database.Connect(connURL)
+	if err != nil {
+		return
+	}
+
+	conn.Exec("DELETE FROM spell")
+}
+
+func checkParallel(t *testing.T) {
+	if parrallel {
+		t.Parallel()
+	}
 }

@@ -14,7 +14,7 @@ type UpdateData CreateData
 
 const updateQuery string = `
 UPDATE spell SET name = $1, damage = $2, mana = $3, updated_at = $4
-WHERE id = $1
+WHERE id = $5
 RETURNING	id, name, damage, mana, created_at, updated_at
 `
 
