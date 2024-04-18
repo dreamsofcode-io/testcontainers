@@ -10,7 +10,7 @@ import (
 
 const createQuery string = `
 INSERT INTO spell (id, name, damage, mana, created_at, updated_at)
-VALUES ($1, $2, $3, $4, $5)
+VALUES ($1, $2, $3, $4, $5, $5)
 `
 
 type CreateData struct {
@@ -25,7 +25,7 @@ func (r *Spells) Create(ctx context.Context, data CreateData) (Spell, error) {
 		return Spell{}, fmt.Errorf("failed to generate uuid v7")
 	}
 
-	timestamp := time.Now()
+	timestamp := time.Now().Truncate(time.Millisecond)
 
 	_, err = r.db.ExecContext(
 		ctx,
