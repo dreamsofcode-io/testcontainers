@@ -14,7 +14,7 @@ FROM spell
 `
 
 var findByIDQuery = fmt.Sprintf(
-	baseFindQuery, "WHERE id = $1",
+	"%s WHERE id = $1", baseFindQuery,
 )
 
 func (r *Spells) FindByID(ctx context.Context, id uuid.UUID) (Spell, error) {
