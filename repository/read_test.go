@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/dreamsofcode-io/testcontainers/database"
 	"github.com/dreamsofcode-io/testcontainers/repository"
 )
 
@@ -68,14 +67,13 @@ func TestFindByID(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			checkParallel(t)
+			ctx := context.Background()
 
-			conn, err := database.Connect(connURL)
+			conn, err := getConnection(ctx)
 			assert.NoError(t, err)
 
 			repo := repository.New(conn)
 			t.Cleanup(cleanup)
-
-			ctx := context.Background()
 
 			if tc.setup != nil {
 				assert.NoError(t, tc.setup(ctx, conn))
@@ -174,13 +172,12 @@ func TestFindAll(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			checkParallel(t)
 
-			conn, err := database.Connect(connURL)
+			ctx := context.Background()
+			conn, err := getConnection(ctx)
 			assert.NoError(t, err)
 
 			repo := repository.New(conn)
 			t.Cleanup(cleanup)
-
-			ctx := context.Background()
 
 			if tc.setup != nil {
 				assert.NoError(t, tc.setup(ctx, conn))

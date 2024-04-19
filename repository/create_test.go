@@ -8,7 +8,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/dreamsofcode-io/testcontainers/database"
 	"github.com/dreamsofcode-io/testcontainers/repository"
 )
 
@@ -62,14 +61,14 @@ func TestCreate(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			checkParallel(t)
+			ctx := context.Background()
 
-			conn, err := database.Connect(connURL)
+			conn, err := getConnection(ctx)
 			assert.NoError(t, err)
 
 			repo := repository.New(conn)
 
 			t.Cleanup(cleanup)
-			ctx := context.Background()
 
 			if tc.setup != nil {
 				tc.setup(ctx, conn)
