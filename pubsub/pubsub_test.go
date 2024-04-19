@@ -85,5 +85,4 @@ func TestPubSub(t *testing.T) {
 		assert.Equal(t, "Another one", msg.Title)
 		assert.Equal(t, "golang is neat too", msg.Description)
 	})
-
 }
