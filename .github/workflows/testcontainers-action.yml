@@ -2,7 +2,7 @@ name: TestContainers Action
 run-name: testcontainers running on github actions 🚀
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  RunIntegrationTest:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 Let's start testing"
