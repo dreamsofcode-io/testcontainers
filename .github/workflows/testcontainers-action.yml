@@ -1,4 +1,4 @@
-name: GitHub Actions Demo
+name: TestContainers Action
 run-name: testcontainers running on github actions 🚀
 on: [push]
 jobs:
@@ -12,5 +12,4 @@ jobs:
         with:
           go-version: "1.22.x"
       - name: Test With testcontainers
-        run: |
-          go test ./ratelimit
+        run: go test ./ratelimit
