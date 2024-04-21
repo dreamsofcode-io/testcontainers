@@ -13,4 +13,4 @@ jobs:
         with:
           go-version: "1.22.x"
       - name: Test With testcontainers
-        run: go test ./ratelimit
+        run: go test ./ratelimit -v
