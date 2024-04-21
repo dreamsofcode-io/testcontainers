@@ -1,0 +1,16 @@
+name: GitHub Actions Demo
+run-name: testcontainers running on github actions 🚀
+on: [push]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 Let's start testing"
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Setup Go 1.22
+        with:
+          go-version: "1.22.x"
+      - name: Test With testcontainers
+        run: |
+          go test ./ratelimit
